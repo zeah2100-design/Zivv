@@ -18,6 +18,7 @@ import NotificationsPage from '@/components/pages/NotificationsPage';
 import SettingsPage from '@/components/pages/SettingsPage';
 import AdminPage from '@/components/pages/AdminPage';
 import AIPage from '@/components/pages/AIPage';
+import AIAssistant from '@/components/AIAssistant';
 
 function AppContent() {
   const { user, isLoading } = useAuth();
@@ -75,6 +76,7 @@ function AppContent() {
       </main>
 
       <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
+      {user && <AIAssistant onNavigate={handleNavigate} />}
     </div>
   );
 }
