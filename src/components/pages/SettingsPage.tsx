@@ -154,6 +154,34 @@ export default function SettingsPage({ onNavigate }: SettingsPageProps) {
 
         <hr className="border-[#262626]" />
 
+        {/* AI Assistant */}
+        <section>
+          <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">🤖 المساعد الذكي</h2>
+          <div className="space-y-3">
+            <label className="flex items-center justify-between py-2">
+              <div>
+                <span className="text-sm">تفعيل المساعد الذكي</span>
+                <p className="text-[10px] text-[#737373]">شخصية ذكية تتحرك وتنفذ أوامرك</p>
+              </div>
+              <input type="checkbox"
+                checked={(() => { try { return JSON.parse(localStorage.getItem('zivv_assistant') || '{}').enabled || false; } catch { return false; } })()}
+                onChange={(e) => {
+                  const saved = JSON.parse(localStorage.getItem('zivv_assistant') || '{}');
+                  saved.enabled = e.target.checked;
+                  localStorage.setItem('zivv_assistant', JSON.stringify(saved));
+                  window.location.reload();
+                }}
+                className="w-5 h-5 accent-[#0095f6] rounded" />
+            </label>
+            <p className="text-[10px] text-[#525252]">
+              المساعد يمشي على الشاشة، يتكلم بالصوت، يسمعك بالمايك، وينفذ أي أمر داخل التطبيق.
+              اضغط عليه لفتح المحادثة.
+            </p>
+          </div>
+        </section>
+
+        <hr className="border-[#262626]" />
+
         <button onClick={() => { logout(); onNavigate('home'); }}
           className="w-full py-3 text-sm text-[#ed4956] flex items-center gap-2 justify-center">
           <LogOut size={18} /> تسجيل الخروج
