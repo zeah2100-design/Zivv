@@ -17,6 +17,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [code, setCode] = useState('');
+  const [verificationToken, setVerificationToken] = useState('');
 
   if (!isOpen) return null;
 
@@ -33,7 +34,10 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         body: JSON.stringify({ email, type: mode }),
       });
       const data = await res.json();
-      if (data.success) { setStep('verify'); }
+      if (data.success) {
+        setVerificationToken(data.verificationToken || '');
+        setStep('verify');
+      }
       else { setError(data.error || 'حدث خطأ'); }
     } catch { setError('حدث خطأ في الاتصال'); }
     finally { setIsLoading(false); }
@@ -47,7 +51,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       // Verify code
       const vRes = await fetch('/api/auth/verify-code', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code }),
+        body: JSON.stringify({ email, code, type: mode, verificationToken }),
       });
       const vData = await vRes.json();
       if (!vData.verified) { setError(vData.error || 'رمز غير صحيح'); setIsLoading(false); return; }
@@ -58,7 +62,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         if (result.success) { reset(); onClose(); }
         else { setError(result.error || 'بيانات غير صحيحة'); }
       } else {
-        const result = await register(username, email, password, birthDate);
+        const result = await register(username, email, password, birthDate, code);
         if (result.success) { reset(); onClose(); }
         else { setError(result.error || 'حدث خطأ'); }
       }
@@ -66,7 +70,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     finally { setIsLoading(false); }
   };
 
-  const reset = () => { setUsername(''); setEmail(''); setPassword(''); setBirthDate(''); setCode(''); setStep('form'); setError(''); };
+  const reset = () => { setUsername(''); setEmail(''); setPassword(''); setBirthDate(''); setCode(''); setVerificationToken(''); setStep('form'); setError(''); };
 
   return (
     <div className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4" onClick={() => { reset(); onClose(); }}>
